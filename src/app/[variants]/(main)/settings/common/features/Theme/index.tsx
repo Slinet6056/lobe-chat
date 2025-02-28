@@ -15,7 +15,8 @@ import { useGlobalStore } from '@/store/global';
 import { useUserStore } from '@/store/user';
 import { settingsSelectors, userGeneralSettingsSelectors } from '@/store/user/selectors';
 
-import { ThemeSwatchesNeutral, ThemeSwatchesPrimary } from './ThemeSwatches';
+import CatppuccinTheme from './CatppuccinTheme';
+import { CatppuccinPrimaryColors } from './ThemeSwatches';
 
 type SettingItemGroup = ItemGroup;
 
@@ -115,15 +116,15 @@ const Theme = memo(() => {
         name: ['general', 'fontSize'],
       },
       {
-        children: <ThemeSwatchesPrimary />,
+        children: <CatppuccinPrimaryColors />,
         desc: t('settingTheme.primaryColor.desc'),
         label: t('settingTheme.primaryColor.title'),
         minWidth: undefined,
       },
       {
-        children: <ThemeSwatchesNeutral />,
-        desc: t('settingTheme.neutralColor.desc'),
-        label: t('settingTheme.neutralColor.title'),
+        children: <CatppuccinTheme />,
+        desc: t('settingTheme.catppuccin.desc'),
+        label: t('settingTheme.catppuccin.title'),
         minWidth: undefined,
       },
     ],

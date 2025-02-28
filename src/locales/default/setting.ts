@@ -310,6 +310,10 @@ export default {
     avatar: {
       title: '头像',
     },
+    catppuccin: {
+      desc: '深色模式下的 Catppuccin 风格选择',
+      title: 'Catppuccin 风格',
+    },
     fontSize: {
       desc: '聊天内容的字体大小',
       marks: {

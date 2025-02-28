@@ -11,7 +11,7 @@ import { ThemeAppearance, createStyles } from 'antd-style';
 import 'antd/dist/reset.css';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ReactNode, memo, useEffect } from 'react';
+import { ReactNode, memo, useEffect, useMemo } from 'react';
 
 import AntdStaticMethods from '@/components/AntdStaticMethods';
 import {
@@ -19,6 +19,13 @@ import {
   LOBE_THEME_NEUTRAL_COLOR,
   LOBE_THEME_PRIMARY_COLOR,
 } from '@/const/theme';
+import {
+  catppuccinFrappe,
+  catppuccinLatte,
+  catppuccinMacchiato,
+  catppuccinMocha,
+  convertCatppuccinToThemeToken,
+} from '@/const/theme/catppuccin';
 import { useUserStore } from '@/store/user';
 import { userGeneralSettingsSelectors } from '@/store/user/selectors';
 import { GlobalStyle } from '@/styles';
@@ -110,6 +117,62 @@ const AppTheme = memo<AppThemeProps>(
       userGeneralSettingsSelectors.neutralColor(s),
     ]);
 
+    // 根据主题模式和中性色选择应用 Catppuccin 风格
+    const catppuccinTokens = useMemo(() => {
+      // 浅色模式固定使用 Latte 变体
+      if (themeMode !== 'dark') {
+        return convertCatppuccinToThemeToken(catppuccinLatte);
+      }
+
+      // 深色模式根据选择的中性色应用不同的 Catppuccin 变体
+      const neutralColorValue = neutralColor as string;
+
+      if (neutralColorValue === 'frappe') {
+        return convertCatppuccinToThemeToken(catppuccinFrappe);
+      }
+
+      if (neutralColorValue === 'macchiato') {
+        return convertCatppuccinToThemeToken(catppuccinMacchiato);
+      }
+
+      if (neutralColorValue === 'mocha') {
+        return convertCatppuccinToThemeToken(catppuccinMocha);
+      }
+
+      // 如果没有选择 Catppuccin 风格，则使用默认的中性色
+      return {};
+    }, [themeMode, neutralColor]);
+
+    // 根据主题色选择应用 Catppuccin 的主题色
+    const catppuccinPrimaryTokens = useMemo(() => {
+      // 如果主题色是 Catppuccin 的颜色，则应用对应的主题色
+      const primaryColorValue = primaryColor as string;
+
+      // 检查是否是 Catppuccin 的颜色
+      const isCatppuccinColor =
+        Object.values(catppuccinLatte).includes(primaryColorValue) ||
+        Object.values(catppuccinFrappe).includes(primaryColorValue) ||
+        Object.values(catppuccinMacchiato).includes(primaryColorValue) ||
+        Object.values(catppuccinMocha).includes(primaryColorValue);
+
+      if (isCatppuccinColor) {
+        return {
+          colorPrimary: primaryColorValue,
+          colorPrimaryActive: primaryColorValue,
+          colorPrimaryBg: primaryColorValue,
+          colorPrimaryBgHover: primaryColorValue,
+          colorPrimaryBorder: primaryColorValue,
+          colorPrimaryBorderHover: primaryColorValue,
+          colorPrimaryHover: primaryColorValue,
+          colorPrimaryText: primaryColorValue,
+          colorPrimaryTextActive: primaryColorValue,
+          colorPrimaryTextHover: primaryColorValue,
+        };
+      }
+
+      return {};
+    }, [primaryColor]);
+
     useEffect(() => {
       setCookie(LOBE_THEME_PRIMARY_COLOR, primaryColor);
     }, [primaryColor]);
@@ -133,6 +196,10 @@ const AppTheme = memo<AppThemeProps>(
           cssVar: true,
           token: {
             fontFamily: customFontFamily ? `${customFontFamily},${theme.fontFamily}` : undefined,
+            // 应用 Catppuccin 风格的主题变量
+            ...catppuccinTokens,
+            // 应用 Catppuccin 主题色
+            ...catppuccinPrimaryTokens,
           },
         }}
         themeMode={themeMode}
